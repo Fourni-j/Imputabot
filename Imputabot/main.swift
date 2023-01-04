@@ -5,10 +5,16 @@
 import Foundation
 
 // The first day of the sprint
-let dateString = "2023-01-04T00:00:00+0200"
+let sprintStartDate = "2023-01-04T00:00:00+0200"
 
 // Update with your AccountID (Inspect network request to get it)
 let authorId = ""
+
+// Update with your own cookie (inspect network request to get it)
+let cookies = ""
+
+// Update with the Jira calendar URL
+let calendarURL = ""
 
 enum ImputationType {
     case sprintPlanning
@@ -62,15 +68,12 @@ let calendar: [[ImputationType]] = [
 ]
 
 func jiraWorklogRequest(_ imputationType: ImputationType, _ startDate: Date) -> URLRequest {
-    
-    var request = URLRequest(url: URL(string: "")!)
+    var request = URLRequest(url: URL(string: calendarURL)!)
     
     // Add headers
     request.addValue("application/json", forHTTPHeaderField: "Content-Type")
     request.addValue("com.jiraworkcalendar.work-calendar", forHTTPHeaderField: "ap-client-key")
-    // Update with your own cookie (inspect calendar request)
-    request.addValue("", forHTTPHeaderField: "Cookie")
-    
+    request.addValue(cookies, forHTTPHeaderField: "Cookie")
     request.httpMethod = "POST"
     request.httpBody = try? JSONEncoder().encode(imputationType.body(startDate: startDate))
     
@@ -78,7 +81,7 @@ func jiraWorklogRequest(_ imputationType: ImputationType, _ startDate: Date) -> 
 }
 
 
-guard let sprintStartDate: Date = ISO8601DateFormatter().date(from: dateString) else {
+guard let sprintStartDate: Date = ISO8601DateFormatter().date(from: sprintStartDate) else {
     exit(-1)
 }
 
